@@ -6,11 +6,13 @@ import math
 from core.epicycles import build_epicycles
 from core.artists import create_artists
 from core.canvas import setup_canvas
+from core.trace import Trace
 
 from core.animation_config import (
     FPS,
     ANIMATION_DURATION,
     ANIMATION_INTERVAL,
+    MAX_TRACE,
 )
 
 def run_animation(
@@ -48,8 +50,7 @@ def run_animation(
         num_harmonics
     )
 
-    trace_x = []
-    trace_y = []
+    trace = Trace(MAX_TRACE)
 
     def animate(frame):
         t = frame / total_frames
@@ -78,19 +79,14 @@ def run_animation(
 
         MAX_TRACE = 5000
 
-        trace_x.append(endpoint[0])
-        trace_y.append(endpoint[1])
+        trace.add(endpoint)
 
         trace_line.set_data(
-            trace_x,
-            trace_y
+            *trace.get_line_data()
         )
 
         trace_fill.set_xy(
-            np.column_stack((
-                trace_x,
-                trace_y
-            ))
+            trace.get_fill_data()
         )
 
         return (
