@@ -1,7 +1,7 @@
 from core.path_optimizer import unify_svg_paths
 from core.svg_loader import sample_svg
 from core.fourier import compute_fourier
-from core.animation import run_animation
+from core.animation import FourierAnimator
 import matplotlib.pyplot as plt
 
 
@@ -28,11 +28,13 @@ def main():
 
     coeffs = compute_fourier(points)
 
-    run_animation(
+    animator = FourierAnimator(
         coeffs=coeffs,
         num_harmonics=NUM_HARMONICS,
         points=points
     )
+
+    animator.run()
 
     # plt.plot(points.real, points.imag)
     # plt.gca().invert_yaxis()

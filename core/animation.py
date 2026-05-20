@@ -15,93 +15,93 @@ from core.animation_config import (
     MAX_TRACE,
 )
 
-def run_animation(
-    coeffs,
-    num_harmonics,
-    points
-):
-    total_frames = ANIMATION_DURATION * FPS
-    active_coeffs = coeffs[:num_harmonics]
 
-    max_amp = sum(
-        c["amp"]
-        for c in active_coeffs
-    )
+class FourierAnimator:
+    def __init__(
+        self,
+        coeffs,
+        num_harmonics,
+        points
+    ):
+        self.coeffs = coeffs
+        self.points = points
 
-    x_limit = np.max(np.abs(points.real))
-    y_limit = np.max(np.abs(points.imag))
+        self.num_harmonics = num_harmonics
 
-    limit = math.ceil(
-        max(x_limit, y_limit) / 100
-    ) * 100
+        self.total_frames = (ANIMATION_DURATION * FPS)
 
-    print("Max amplitude:", max_amp)
-    print("Canvas limit:", limit)
+        self.active_coeffs = (coeffs[:num_harmonics])
 
-    fig, ax = setup_canvas(limit)
+        x_limit = np.max(np.abs(points.real))
+        y_limit = np.max(np.abs(points.imag))
 
-    (
-        vector_lines,
-        circles,
-        trace_line,
-        trace_fill
-    ) = create_artists(
-        ax,
-        num_harmonics
-    )
+        limit = math.ceil(max(x_limit, y_limit) / 100) * 100
 
-    trace = Trace(MAX_TRACE)
+        self.fig, self.ax = setup_canvas(limit)
 
-    def animate(frame):
-        t = frame / total_frames
+        (
+            self.vector_lines,
+            self.circles,
+            self.trace_line,
+            self.trace_fill
+        ) = create_artists(
+            self.ax,
+            num_harmonics
+        )
+
+        self.trace = Trace(MAX_TRACE)
+
+    def animate(self, frame):
+        t = frame / self.total_frames
 
         vectors, endpoint = build_epicycles(
-            active_coeffs,
+            self.active_coeffs,
             t,
-            num_harmonics
+            self.num_harmonics
         )
 
         for i, vec in enumerate(vectors):
             sx, sy = vec["start"]
             ex, ey = vec["end"]
 
-            vector_lines[i].set_data(
+            self.vector_lines[i].set_data(
                 [sx, ex],
                 [sy, ey]
             )
 
-            circles[i].center = (
+            self.circles[i].center = (
                 sx,
                 sy
             )
 
-            circles[i].radius = vec["radius"]
+            self.circles[i].radius = vec["radius"]
 
         MAX_TRACE = 5000
 
-        trace.add(endpoint)
+        self.trace.add(endpoint)
 
-        trace_line.set_data(
-            *trace.get_line_data()
+        self.trace_line.set_data(
+            *self.trace.get_line_data()
         )
 
-        trace_fill.set_xy(
-            trace.get_fill_data()
+        self.trace_fill.set_xy(
+            self.trace.get_fill_data()
         )
 
         return (
-            vector_lines
-            + circles
-            + [trace_line, trace_fill]
+            self.vector_lines
+            + self.circles
+            + [self.trace_line, self.trace_fill]
         )
 
-    anim = FuncAnimation(
-        fig,
-        animate,
-        frames=total_frames,
-        interval=ANIMATION_INTERVAL,
-        blit=True,
-        repeat=False
-    )
+    def run(self):
+        self.anim = FuncAnimation(
+            self.fig,
+            self.animate,
+            frames=self.total_frames,
+            interval=ANIMATION_INTERVAL,
+            blit=True,
+            repeat=False
+        )
 
-    plt.show()
+        plt.show()
