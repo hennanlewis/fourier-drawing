@@ -1,5 +1,6 @@
-import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
+
+import matplotlib.pyplot as plt
 import numpy as np
 import math
 
@@ -92,7 +93,10 @@ class FourierAnimator:
             + [self.trace_line, self.trace_fill]
         )
 
-    def run(self):
+    def build_animation(self):
+        if self.anim is not None:
+            return
+
         self.anim = FuncAnimation(
             self.fig,
             self.animate,
@@ -101,5 +105,8 @@ class FourierAnimator:
             blit=True,
             repeat=False
         )
+
+    def run(self):
+        self.build_animation()
 
         plt.show()
