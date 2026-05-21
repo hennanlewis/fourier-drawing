@@ -1,5 +1,7 @@
 import numpy as np
 
+from core.models import Epicycle
+
 
 def build_epicycles(
     coeffs,
@@ -17,9 +19,9 @@ def build_epicycles(
         prev_x = x
         prev_y = y
 
-        freq = c["freq"]
-        amp = c["amp"]
-        phase = c["phase"]
+        freq = c.freq
+        amp = c.amp
+        phase = c.phase
 
         angle = (
             2
@@ -32,10 +34,12 @@ def build_epicycles(
         x += amp * np.cos(angle)
         y += amp * np.sin(angle)
 
-        vectors.append({
-            "start": (prev_x, prev_y),
-            "end": (x, y),
-            "radius": amp
-        })
+        vectors.append(
+            Epicycle(
+                start=(prev_x, prev_y),
+                end=(x, y),
+                radius=amp
+            )
+        )
 
     return vectors, (x, y)

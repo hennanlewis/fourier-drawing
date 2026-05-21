@@ -61,8 +61,8 @@ class FourierAnimator:
         )
 
         for i, vec in enumerate(vectors):
-            sx, sy = vec["start"]
-            ex, ey = vec["end"]
+            sx, sy = vec.start
+            ex, ey = vec.end
 
             self.vector_lines[i].set_data(
                 [sx, ex],
@@ -74,9 +74,7 @@ class FourierAnimator:
                 sy
             )
 
-            self.circles[i].radius = vec["radius"]
-
-        MAX_TRACE = 5000
+            self.circles[i].radius = vec.radius
 
         self.trace.add(endpoint)
 
