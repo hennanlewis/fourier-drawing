@@ -1,4 +1,6 @@
 from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FFMpegWriter
+from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -52,6 +54,8 @@ class FourierAnimator:
 
         self.trace = Trace(MAX_TRACE)
 
+        self.anim = None
+
     def animate(self, frame):
         t = frame / self.total_frames
 
@@ -104,6 +108,27 @@ class FourierAnimator:
             interval=ANIMATION_INTERVAL,
             blit=True,
             repeat=False
+        )
+
+    def export_mp4(self, output_path):
+        self.build_animation()
+
+        output_path = Path(output_path)
+
+        output_path.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        writer = FFMpegWriter(
+            fps=FPS,
+            bitrate=2000
+        )
+
+        self.anim.save(
+            output_path,
+            writer=writer,
+            dpi=100
         )
 
     def run(self):

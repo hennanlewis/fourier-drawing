@@ -34,7 +34,8 @@ def main():
         points=points
     )
 
-    animator.run()
+    animator.export_mp4("output/video/test.mp4")
+    # animator.run()
 
     # plt.plot(points.real, points.imag)
     # plt.gca().invert_yaxis()
